@@ -45,7 +45,7 @@ GameField::GameField(QWidget *parent, QString username, QString enemy)
 
     // Инициализация сеток
     initializeGrid(playerGrid, enemyGrid);
-    setGridEnabled(enemyGrid, 0,0); // Выключаем сетку противника перед началом игры
+    setGridEnabled(enemyGrid, 0,1); // Выключаем сетку противника перед началом игры
 
     // Добавляем основной макет в главный вертикальный макет
     mainVerticalLayout->addLayout(mainLayout);
@@ -84,8 +84,13 @@ void GameField::handleData(const QString &data){
         QString timestampStr = data.mid(1);
         Timerlabel->setText(timestampStr); // Изменить секунды в таймеры приходящие с сервера
         if (timestampStr == "0"){ // Если время вышло, то открыть поле противника и закрыть поле игрока
-            setGridEnabled(enemyGrid, 1, 1);
-            setGridEnabled(playerGrid, 0, 1);
+            QTimer::singleShot(2000, this, [=]() { // Задержка в 2 секунды
+                setGridEnabled(playerGrid, 0, 1);
+            });
+            // Затем через 4 секунды включаем сетку врага
+            QTimer::singleShot(4000, this, [=]() { // Задержка в 4 секунды
+                setGridEnabled(enemyGrid, 1, 1);
+            });
         }
     }
     if (data[0] == 'R'){ // Изменить значение лейбла оставшихся кораблей
@@ -112,7 +117,6 @@ void GameField::handleData(const QString &data){
             enemyTurnLabel->setAlignment(Qt::AlignCenter);
             downLayout->addWidget(enemyTurnLabel, 0, Qt::AlignCenter);
             downLayout->addWidget(yourTurnLabel, 0, Qt::AlignCenter);
-
             QString currentTurnPlayer = trimmedMessage.mid(5); // Убираем не нужные символы и записываем в переменную ход игрока
             if (currentTurnPlayer == username) { // Если текущий ход принадлежит игроку
                 setGridEnabled(enemyGrid, true,1); // Разблокировать поле противника
