@@ -29,7 +29,7 @@ private:
     QMap<QTcpSocket*, QVector<QVector<int>>> playersFields;
     QMap<QTcpSocket*,int> playerShips;
     QTimer *timer;
-    int remainingTime = 60;
+    int remainingTime = 20;
 };
 
 // Класс SessionManager управляем всеми сессиями на сервере (Создаёт, удаляет).
