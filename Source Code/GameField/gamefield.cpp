@@ -102,7 +102,9 @@ void GameField::handleData(const QString &data){
     }
     QStringList messages = data.split("\n", Qt::SkipEmptyParts); // Используется для разделения приходящих сообщений от сервера
     for (const QString& message : messages) {
-        if (message == " turn " + username || message == " turn " + enemy) { // Если в сообщениие от сервера был описан ход игрока или противника
+        QString trimmedMessage = message.trimmed();
+        qDebug() << "Message: " << trimmedMessage;
+        if (trimmedMessage  == "turn " + username || trimmedMessage  == "turn " + enemy) { // Если в сообщениие от сервера был описан ход игрока или противника
             QFont font = yourTurnLabel->font(); // Изменяем лейб хода, чтобы вывести чей сейчас ход //
             yourTurnLabel->setFont(font);
             yourTurnLabel->setAlignment(Qt::AlignCenter);
@@ -111,7 +113,7 @@ void GameField::handleData(const QString &data){
             downLayout->addWidget(enemyTurnLabel, 0, Qt::AlignCenter);
             downLayout->addWidget(yourTurnLabel, 0, Qt::AlignCenter);
 
-            QString currentTurnPlayer = message.mid(6); // Убираем не нужные символы и записываем в переменную ход игрока
+            QString currentTurnPlayer = trimmedMessage.mid(5); // Убираем не нужные символы и записываем в переменную ход игрока
             if (currentTurnPlayer == username) { // Если текущий ход принадлежит игроку
                 setGridEnabled(enemyGrid, true,1); // Разблокировать поле противника
                 yourTurnLabel->setText("Ваш ход"); // Изменить лейбл текущего хода
